@@ -28,6 +28,7 @@
     [self.animator addBehavior:self.gravity];
     [self.animator addBehavior:self.collision];
     [self.collision addBoundaryWithIdentifier:@"bottom" fromPoint:CGPointMake(0, self.view.frame.size.height) toPoint:CGPointMake(self.view.frame.size.width, self.view.frame.size.height)];
+    [self.collision addBoundaryWithIdentifier:@"roof" fromPoint:CGPointMake(0, self.view.frame.size.height * 0.6) toPoint:CGPointMake(self.view.frame.size.width * 0.3, self.view.frame.size.height * 0.7)];
     self.collision.collisionDelegate = self;
     [NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(makeSnow) userInfo:nil repeats:YES];
     self.moltenSnowFlakes = [NSMutableSet set];
@@ -45,25 +46,19 @@
 
 - (void)collisionBehavior:(UICollisionBehavior*)behavior beganContactForItem:(id <UIDynamicItem>)item withBoundaryIdentifier:(id <NSCopying>)identifier atPoint:(CGPoint)p {
     NSString *boundary = (NSString *)identifier;
+    if (![boundary isEqualToString:@"bottom"]) {
+        return;
+    }
     UIView *snowFlake = (UIView *)item;
     if ([self.moltenSnowFlakes containsObject:snowFlake]) {
         return;
     }
-//    if ([boundary isEqualToString:@"bottom"]) {
-//        itemView.backgroundColor = [UIColor blueColor];
-//    } else {
-//    itemView.backgroundColor = [UIColor redColor];
-//    }
     [self meltSnowFlake:snowFlake];
     [self.moltenSnowFlakes addObject:snowFlake];
 }
 
 - (void)meltSnowFlake:(UIView *)snowFlake {
-//    if (snowFlake.transform == nil) {
-//        NSLog(@"already melt");
-//        return;
-//    }
-    CGAffineTransform scaleTransform = CGAffineTransformMakeScale(0.1, 0.1);
+//    CGAffineTransform scaleTransform = CGAffineTransformMakeScale(0.1, 0.1);
     [UIView animateWithDuration:2.0 animations:^{
 //        snowFlake.transform = scaleTransform;
         snowFlake.backgroundColor = [UIColor clearColor];
